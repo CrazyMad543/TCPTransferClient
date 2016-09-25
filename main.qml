@@ -1,5 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 2.0
+import QtQuick.Dialogs 1.2
+import Client.data 1.0
 
 ApplicationWindow {
     visible: true
@@ -22,7 +24,8 @@ ApplicationWindow {
 
     TextField {
         id: fileUrl
-        //text: qsTr(FilePath)
+        text: qsTr(clientData.filePath)
+        readOnly: true
         height: 30
         font.pixelSize: 18
         anchors {
@@ -45,11 +48,23 @@ ApplicationWindow {
             rightMargin: 10
             topMargin: 10
         }
+        onClicked: fileDialog.open()
+    }
+
+    FileDialog {
+        id: fileDialog
+        title: "Please select a file"
+        visible: false
+        folder: shortcuts.desktop
+        onAccepted: {
+            clientData.openFile(fileDialog.fileUrl)
+            fileDialog.close();
+        }
     }
 
     Label {
         id: sizeLabel
-        text: qsTr("Size: "/* + sizeFile*/)
+        text: qsTr("Size: " + clientData.sizeFile)
         font.pixelSize: 20
         height: 30
         anchors {
@@ -157,6 +172,10 @@ ApplicationWindow {
                 color: "#e6e6e6"
                 radius: 10
             }
+    }
+
+    ClientData {
+        id: clientData
     }
 
 }
