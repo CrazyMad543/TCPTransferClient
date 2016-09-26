@@ -155,10 +155,13 @@ ApplicationWindow {
             rightMargin: 10
             topMargin: 10
         }
+        onClicked: clientData.sendFile(hostIp.text, portNumber.text)
     }
 
     ProgressBar {
         id: progressTransfer
+        value: clientData.value
+
         anchors {
             top: progressLabel.bottom
             left: parent.left
