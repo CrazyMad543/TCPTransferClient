@@ -10,6 +10,7 @@ class ClientData : public QObject {
     Q_OBJECT
 public:
     explicit ClientData(QObject *parent = 0);
+    ~ClientData();
 
     Q_PROPERTY(float value READ getValue NOTIFY valueChanged)
     Q_PROPERTY(QString sizeFile READ getSizeFile NOTIFY sizeFileChanged)
@@ -29,6 +30,7 @@ signals:
     void filePathChanged();
 
 public slots:
+    void sendPartFile();
 
 private:
     QTcpSocket *socket;

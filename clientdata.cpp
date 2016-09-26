@@ -1,7 +1,6 @@
 #include "clientdata.h"
 
 #include <QFileInfo>
-#include <QDebug>
 #include <QUrl>
 
 ClientData::ClientData(QObject *parent) : QObject(parent) {
@@ -11,9 +10,39 @@ ClientData::ClientData(QObject *parent) : QObject(parent) {
     m_value = 0.0;
 }
 
+ClientData::~ClientData() {
+    delete socket;
+}
+
 void ClientData::sendFile(const QString &host, const QString &port) {
     socket->connectToHost(host, port.toInt(), QIODevice::WriteOnly);
-    socket->waitForConnected();
+    if(!socket->waitForConnected())
+        return;
+
+    connect(socket, &QTcpSocket::bytesWritten, this, &ClientData::sendPartFile);
+    sendPartFile();
+}
+
+void ClientData::sendPartFile() {
+    char data[1024];
+    if(!transferFile->atEnd()) {
+        quint64 receivedSize = transferFile->read(data, sizeof(data));
+        socket->write(data, receivedSize);
+    } else {
+        transferFile->close();
+        transferFile = NULL;
+
+        socket->disconnectFromHost();
+
+        disconnect(socket, &QTcpSocket::bytesWritten, this, &ClientData::sendPartFile);
+
+        m_sizeFile = "0";
+        emit sizeFileChanged();
+        m_filePath = "";
+        emit filePathChanged();
+        m_value = 0.0;
+        emit valueChanged();
+    }
 }
 
 void ClientData::openFile(const QString& urlFile) {
