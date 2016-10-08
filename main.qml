@@ -6,7 +6,7 @@ import Client.data 1.0
 ApplicationWindow {
     visible: true
     width: 600
-    height: 210
+    height: 190
     title: qsTr("Transfer Client")
 
     Label {
@@ -170,11 +170,6 @@ ApplicationWindow {
             leftMargin: 10
             rightMargin: 10
         }
-        background: Rectangle {
-                implicitHeight: 30
-                color: "#e6e6e6"
-                radius: 10
-            }
     }
 
     ClientData {

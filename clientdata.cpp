@@ -8,6 +8,7 @@ ClientData::ClientData(QObject *parent) : QObject(parent) {
     m_sizeFile = "0";
     m_filePath = "";
     m_value = 0.0;
+    transferSize = 0;
 }
 
 ClientData::~ClientData() {
@@ -28,6 +29,10 @@ void ClientData::sendPartFile() {
     if(!transferFile->atEnd()) {
         quint64 receivedSize = transferFile->read(data, sizeof(data));
         socket->write(data, receivedSize);
+
+        transferSize += receivedSize;
+        m_value = (double)transferSize / (double)transferFile->size();
+        emit valueChanged();
     } else {
         transferFile->close();
         transferFile = NULL;
@@ -48,7 +53,7 @@ void ClientData::sendPartFile() {
 void ClientData::openFile(const QString& urlFile) {
     transferFile = new QFile(QUrl(urlFile).toLocalFile());
     if(transferFile->open(QIODevice::ReadOnly)) {
-        m_sizeFile = QString::number(QFileInfo(QUrl(urlFile).toLocalFile()).size()) + " Bytes";
+        m_sizeFile = QString::number(transferFile->size()) + " Bytes";
         emit sizeFileChanged();
         m_filePath = QUrl(urlFile).toLocalFile();
         emit filePathChanged();

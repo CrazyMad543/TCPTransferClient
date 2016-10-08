@@ -12,7 +12,7 @@ public:
     explicit ClientData(QObject *parent = 0);
     ~ClientData();
 
-    Q_PROPERTY(float value READ getValue NOTIFY valueChanged)
+    Q_PROPERTY(double value READ getValue NOTIFY valueChanged)
     Q_PROPERTY(QString sizeFile READ getSizeFile NOTIFY sizeFileChanged)
     Q_PROPERTY(QString filePath READ getFilePath NOTIFY filePathChanged)
 
@@ -20,7 +20,7 @@ public:
     Q_INVOKABLE void sendFile(const QString& host, const QString& port);
 
 public:
-    qint64 getValue() const { return m_value; }
+    double getValue() const { return m_value; }
     QString getSizeFile() const { return m_sizeFile; }
     QString getFilePath() const { return m_filePath; }
 
@@ -35,7 +35,8 @@ public slots:
 private:
     QTcpSocket *socket;
     QFile *transferFile;
-    float m_value;
+    double m_value;
+    quint64 transferSize;
     QString m_sizeFile;
     QString m_filePath;
 
